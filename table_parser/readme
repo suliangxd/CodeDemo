@@ -25,5 +25,4 @@
     7. 代码的可读性和可维护性好
     8. 完成相应的单元测试和使用demo, 你的代码必须可编译， Demo可运行， 单元测试有效而且通过;
          * 提示，demo也要符合编码规范，:-)
-         * 单元测试必须使用GTest/BTest, 单测上手指南:
-         http://wiki.babel.baidu.com/twiki/pub/Ps/Searcher/PSCodeMasterCertification/%e6%95%99%e4%bd%a0%e8%bd%bb%e6%9d%be%e5%ad%a6%e4%bc%9a%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95.pdf
+         * 单元测试必须使用GTest
