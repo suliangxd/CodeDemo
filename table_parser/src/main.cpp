@@ -1,9 +1,8 @@
 //
 // Created by Liang on 2016/12/14.
 //
-#include <iostream>
 #include <cstring>
-
+#include <iostream>
 
 #include "table_parser.h"
 
@@ -21,11 +20,11 @@ struct my_data {
     sub_data d;
 };
 
-bool ParseSubDataCallback(const char* s, unsigned len, void* data, unsigned size, void* context) {
+bool ParseSubDataCallback(const char* s, unsigned len, void* data,
+                          unsigned size, void* context) {
     sub_data* p = reinterpret_cast<sub_data*>(data);
 
-    if (size != sizeof(sub_data))
-        return false;
+    if (size != sizeof(sub_data)) return false;
 
     if (::strncmp(s, "true", len) == 0)
         p->a = true;
@@ -37,26 +36,29 @@ bool ParseSubDataCallback(const char* s, unsigned len, void* data, unsigned size
 }
 
 tp::ColumnDescriptor my_data_desc[] = {
-        {tp::KFLOAT, true, 5, sizeof(float), offsetof(my_data, a), offsetof(my_data, count_a),
-                                                                              nullptr, nullptr },
-        {tp::KSTRING, false, 0, sizeof(my_data::b), offsetof(my_data, b), 0, nullptr, nullptr },
-        {tp::KINT, false, 0, sizeof(int), offsetof(my_data, c), 0, nullptr, nullptr },
-        {tp::KCLASS, false, 0, sizeof(sub_data), offsetof(my_data, d), 0, ParseSubDataCallback,
-                                                                                       nullptr },
-        {tp::KNONE, false, 0, 0, 0, 0, nullptr, nullptr }
-};
+    {tp::KFLOAT, true, 5, sizeof(float), offsetof(my_data, a),
+     offsetof(my_data, count_a), nullptr, nullptr},
+    {tp::KSTRING, false, 0, sizeof(my_data::b), offsetof(my_data, b), 0,
+     nullptr, nullptr},
+    {tp::KINT, false, 0, sizeof(int), offsetof(my_data, c), 0, nullptr,
+     nullptr},
+    {tp::KCLASS, false, 0, sizeof(sub_data), offsetof(my_data, d), 0,
+     ParseSubDataCallback, nullptr},
+    {tp::KNONE, false, 0, 0, 0, 0, nullptr, nullptr}};
 
-const char* my_data_text = "3:-1.5,2.23,1\thello world!\t+100011111111111\ttrue\n3:0,0.1,1e2\ttest\t12345\tfale";
+const char* my_data_text =
+    "3:-1.5,2.23,1\thello "
+    "world!\t+100011111111111\ttrue\n3:0,0.1,1e2\ttest\t12345\tfale";
 
-// const char* my_data_text = "3:-1.5,0.1,1e2\thello world!\t-100\ttrue\n3:0,0.1,1e2\ttest\t12345\tfalse";
+// const char* my_data_text = "3:-1.5,0.1,1e2\thello
+// world!\t-100\ttrue\n3:0,0.1,1e2\ttest\t12345\tfalse";
 
 int main() {
     vector<my_data> results;
     vector<string> errors;
     unsigned count = tp::parse_all(my_data_text, my_data_desc, results, errors);
 
-    for (unsigned i = 0; i < errors.size(); ++i)
-        cout << errors[i] << endl;
+    for (unsigned i = 0; i < errors.size(); ++i) cout << errors[i] << endl;
     for (unsigned i = 0; i < results.size(); ++i) {
         for (unsigned j = 0; j < results[i].count_a; ++j)
             cout << results[i].a[j] << " ";
@@ -68,4 +70,3 @@ int main() {
 
     return 0;
 }
-
