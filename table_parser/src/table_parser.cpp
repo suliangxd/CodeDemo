@@ -11,7 +11,7 @@
 namespace tp {
 
     // 支持针对10进制带符号32位整数的解析
-    static bool parse_int_callback(const char *s, unsigned len, void *data, unsigned size,
+    static bool parse_int_callback(const char *s, size_t len, void *data, size_t size,
                                    void *context) {
         UNUSED(context);
 
@@ -36,7 +36,7 @@ namespace tp {
 
         // 数字
         int ret = 0;
-        for (unsigned i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             char c = s[i];
             if (c >= '0' && c <= '9') {
                 ret = ret * 10 + (c - '0');
@@ -55,7 +55,7 @@ namespace tp {
 
     // 支持符合浮点数表达的解析
     // 参见json.org的语法描述
-    static bool parse_float_callback(const char *s, unsigned len, void *data, unsigned size,
+    static bool parse_float_callback(const char *s, size_t len, void *data, size_t size,
                                      void *context) {
         UNUSED(context);
 
@@ -84,8 +84,8 @@ namespace tp {
         bool neg_power = false;
         int power = 0;
 
-        unsigned state = 0;
-        for (unsigned i = 0; i < len; ++i) {
+        int state = 0;
+        for (int i = 0; i < len; ++i) {
             char c = s[i];
             switch (state) {
             case 0:
@@ -178,7 +178,7 @@ namespace tp {
     }
 
     // 支持字符串格式
-    static bool parse_string_callback(const char *s, unsigned len, void *data, unsigned size,
+    static bool parse_string_callback(const char *s, size_t len, void *data, size_t size,
                                       void *context) {
         UNUSED(context);
 
@@ -193,7 +193,6 @@ namespace tp {
 
     TableParser::TableParser(const char *src, const ColumnDescriptor desc[])
             : _src(src), _desc(desc), _line(1) {
-        // std::strcpy(_err, "ok");
         std::snprintf(_err, sizeof(_err), "%s", "ok");
     }
 
@@ -201,7 +200,6 @@ namespace tp {
         _src = org._src;
         _desc = org._desc;
         _line = org._line;
-        // std::strcpy(_err, org._err);
         std::snprintf(_err, sizeof(_err), "%s", org._err);
     }
 
@@ -209,7 +207,6 @@ namespace tp {
         _src = rhs._src;
         _desc = rhs._desc;
         _line = rhs._line;
-        // std::strcpy(_err, rhs._err);
         std::snprintf(_err, sizeof(_err), "%s", rhs._err);
         return *this;
     }
@@ -225,7 +222,7 @@ namespace tp {
      *   针对非array字段，element构成元素中不得出现'\t'
      *   针对array字段，element构成元素中不得出现','和'\t'
      */
-    ParseResult TableParser::parse(void *p, unsigned size) {
+    ParseResult TableParser::parse(void *p, size_t size) {
         char c = *_src;
         if (c == '\0') {
             return KEOF;
@@ -264,7 +261,7 @@ namespace tp {
             // 解析一个元素
             if (!parse_end && desc.is_array) {
                 char *end_of_count = nullptr;
-                unsigned count = std::strtoul(_src, &end_of_count, 10);
+                size_t count = std::strtoul(_src, &end_of_count, 10);
 
                 if (end_of_count == _src) {
                     ret = KERROR;
@@ -288,7 +285,7 @@ namespace tp {
 
                 if (!parse_end) {
                     // 设置数组大小描述内存
-                    *reinterpret_cast<unsigned *>((void *) ((char *) p + desc.array_counter_offset))
+                    *reinterpret_cast<size_t *>((void *) ((char *) p + desc.array_counter_offset))
                             = count;
 
                     // 依次解析数组元素
@@ -422,7 +419,7 @@ namespace tp {
         return _err;
     }
 
-    ParseResult TableParser::parse_element(unsigned idx, const char *s, unsigned len, void *data) {
+    ParseResult TableParser::parse_element(unsigned idx, const char *s, size_t len, void *data) {
         const ColumnDescriptor &desc = _desc[idx];
         parser_callback cb;
 

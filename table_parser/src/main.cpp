@@ -21,7 +21,7 @@ struct my_data {
     sub_data d;
 };
 
-bool ParseSubDataCallback(const char* s, unsigned len, void* data, unsigned size, void* context) {
+bool ParseSubDataCallback(const char* s, size_t len, void* data, size_t size, void* context) {
     sub_data* p = reinterpret_cast<sub_data*>(data);
 
     if (size != sizeof(sub_data))
@@ -53,12 +53,12 @@ const char* my_data_text = "3:-1.5,2.23,1\thello world!\t+100011111111111\ttrue\
 int main() {
     vector<my_data> results;
     vector<string> errors;
-    unsigned count = tp::parse_all(my_data_text, my_data_desc, results, errors);
+    size_t count = tp::parse_all(my_data_text, my_data_desc, results, errors);
 
-    for (unsigned i = 0; i < errors.size(); ++i)
+    for (int i = 0; i < errors.size(); ++i)
         cout << errors[i] << endl;
-    for (unsigned i = 0; i < results.size(); ++i) {
-        for (unsigned j = 0; j < results[i].count_a; ++j)
+    for (int i = 0; i < results.size(); ++i) {
+        for (int j = 0; j < results[i].count_a; ++j)
             cout << results[i].a[j] << " ";
         cout << results[i].b << " ";
         cout << results[i].c << " ";
@@ -68,4 +68,3 @@ int main() {
 
     return 0;
 }
-
