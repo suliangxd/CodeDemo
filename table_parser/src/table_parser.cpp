@@ -131,23 +131,13 @@ static bool parse_float_callback(const char *s, unsigned len, void *data,
                 break;
             case 4:
                 if (c == '+') {
-                    state = 5;
+                    state = 6;
                 } else if (c == '-') {
                     neg_power = true;
-                    state = 5;
+                    state = 6;
                 } else {
                     --i;
-                    state = 5;
-                }
-                break;
-            case 5:
-                if (c == '0') {
-                    state = 7;
-                } else if (c >= '1' && c <= '9') {
                     state = 6;
-                    power = c - '1' + 1;
-                } else {
-                    return false;
                 }
                 break;
             case 6:  // 终止态
