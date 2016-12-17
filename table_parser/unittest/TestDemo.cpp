@@ -23,6 +23,7 @@ struct my_data {
 
 bool ParseSubDataCallback(const char* s, size_t len, void* data,
                           size_t size, void* context) {
+    static_cast<void>(context);
     sub_data* p = reinterpret_cast<sub_data*>(data);
 
     if (size != sizeof(sub_data)) return false;
