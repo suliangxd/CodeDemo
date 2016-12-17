@@ -79,11 +79,11 @@ static bool parse_float_callback(const char *s, size_t len, void *data,
         neg = true;
     }
 
-    float int_part = 0;
-    float frac_part = 0;
-    float frac_pos = 0.1;
+    double int_part = 0;
+    double frac_part = 0;
+    double frac_pos = 0.1;
     bool neg_power = false;
-    float power = 0;
+    double power = 0;
 
     int state = 0;
     for (size_t i = 0; i < len; ++i) {
@@ -158,13 +158,13 @@ static bool parse_float_callback(const char *s, size_t len, void *data,
         return false;
     }
 
-    float ret = (int_part + frac_part) *
+    double ret = (int_part + frac_part) *
                 std::pow(10., static_cast<float>(neg_power ? -power : power));
     if (neg) {
         ret = -ret;
     }
 
-    *reinterpret_cast<float *>(data) = ret;
+    *reinterpret_cast<float *>(data) = static_cast<float>(ret);;
     return true;
 }
 
