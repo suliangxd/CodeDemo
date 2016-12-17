@@ -2,7 +2,7 @@
 #include <cstring>
 #include <gtest/gtest.h>
 
-#include "table_parser.cpp"
+#include "../src/table_parser.cpp"
 
 #define GENERATE_LEGAL_TEST(NAME, VALUE) \
 TEST(TestFloat, NAME) { \

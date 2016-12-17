@@ -3,6 +3,8 @@ CXXLD ?= $(CXX)
 CXXFLAGS ?= -O2 -std=c++11 -Wall -Wextra -Wformat=2 -Wconversion
 LDFLAGS ?= -fuse-ld=gold
 
+export CXX CXXLD CXXFLAGS LDFLAGS
+
 CXXFLAGS += "-I./include"
 
 all : libtableparser.so
@@ -27,6 +29,7 @@ demo.o : src/main.cpp include/table_parser.h
 
 clean :
 	@rm -vf table_parser.o demo.o libtableparser.so demo
+	@$(MAKE) -C unittest clean
 
 .PHONY: install
 
@@ -48,4 +51,5 @@ check : demo
 	@rm -f demo.out
 	@rm demo.ac
 	@echo "demo output is correct."
-# TODO unit tests
+	@echo "Doing unit tests..."
+	@$(MAKE) -C unittest -B
