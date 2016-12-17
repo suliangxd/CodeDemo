@@ -9,7 +9,7 @@
         float f;                                                         \
         ASSERT_TRUE(tp::parse_float_callback(#VALUE, strlen(#VALUE), &f, \
                                              sizeof(float), NULL));      \
-        EXPECT_FLOAT_EQ(VALUE, f);                                       \
+        EXPECT_FLOAT_EQ(static_cast<float>(VALUE), f);                   \
         SUCCEED();                                                       \
     }
 

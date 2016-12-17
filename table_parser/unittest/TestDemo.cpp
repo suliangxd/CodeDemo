@@ -52,8 +52,8 @@ TEST(DemoTest, HandleLegalInput) {
         "3:-1.5,2.23,1\thello world!\t47\ttrue\n"
         "2:3.1415927,2.7182818\tooooorz\t42\tfalse\n";
     static const my_data output[] = {
-        {3, {-1.5, 2.23, 1.0}, "hello world!", 47, {true}},
-        {2, {3.1415927, 2.7182818}, "ooooorz", 42, {false}}};
+        {3, {-1.5f, 2.23f, 1.0f}, "hello world!", 47, {true}},
+        {2, {3.1415927f, 2.7182818f}, "ooooorz", 42, {false}}};
 
     vector<my_data> results;
     vector<string> errors;
