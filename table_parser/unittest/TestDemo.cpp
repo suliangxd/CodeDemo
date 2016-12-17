@@ -1,9 +1,9 @@
 //
 // Created by Liang on 2016/12/14.
 //
+#include <gtest/gtest.h>
 #include <cstring>
 #include <iostream>
-#include <gtest/gtest.h>
 
 #include "table_parser.h"
 
@@ -48,37 +48,37 @@ tp::ColumnDescriptor my_data_desc[] = {
     {tp::KNONE, false, 0, 0, 0, 0, nullptr, nullptr}};
 
 TEST(DemoTest, HandleLegalInput) {
-	const char *input =
-		"3:-1.5,2.23,1\thello world!\t47\ttrue\n"
-		"2:3.1415927,2.7182818\tooooorz\t42\tfalse\n";
-	static const my_data output[] = {
-		{3, {-1.5, 2.23, 1.0}, "hello world!",47,{true}},
-		{2, {3.1415927,2.7182818}, "ooooorz", 42, {false}}};
+    const char* input =
+        "3:-1.5,2.23,1\thello world!\t47\ttrue\n"
+        "2:3.1415927,2.7182818\tooooorz\t42\tfalse\n";
+    static const my_data output[] = {
+        {3, {-1.5, 2.23, 1.0}, "hello world!", 47, {true}},
+        {2, {3.1415927, 2.7182818}, "ooooorz", 42, {false}}};
 
     vector<my_data> results;
     vector<string> errors;
     unsigned count = tp::parse_all(input, my_data_desc, results, errors);
 
-	EXPECT_EQ(2, count);
-	ASSERT_EQ(2, results.size());
+    EXPECT_EQ(2, count);
+    ASSERT_EQ(2, results.size());
 
     for (unsigned i = 0; i < results.size(); ++i) {
-    	// Make a closure for ASSERT_XXX
-    	[&]() {
-			ASSERT_EQ(output[i].count_a, results[i].count_a);
+        // Make a closure for ASSERT_XXX
+        [&]() {
+            ASSERT_EQ(output[i].count_a, results[i].count_a);
 
-			for (unsigned j = 0; j < results[i].count_a; ++j)
-				EXPECT_FLOAT_EQ(output[i].a[j], results[i].a[j]);
-		} ();
-		EXPECT_STREQ(output[i].b, results[i].b);
-		EXPECT_EQ(output[i].c, results[i].c);
-		EXPECT_EQ(output[i].d.a, results[i].d.a);
+            for (unsigned j = 0; j < results[i].count_a; ++j)
+                EXPECT_FLOAT_EQ(output[i].a[j], results[i].a[j]);
+        }();
+        EXPECT_STREQ(output[i].b, results[i].b);
+        EXPECT_EQ(output[i].c, results[i].c);
+        EXPECT_EQ(output[i].d.a, results[i].d.a);
     }
 
     SUCCEED();
 }
 
-int main(int argc, char **argv) {
-	testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+int main(int argc, char** argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
