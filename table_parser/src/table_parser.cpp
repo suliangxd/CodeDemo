@@ -37,7 +37,7 @@ static bool parse_int_callback(const char *s, size_t len, void *data,
 
     // 数字
     int ret = 0;
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         char c = s[i];
         if (c >= '0' && c <= '9') {
             ret = ret * 10 + (c - '0');
@@ -86,7 +86,7 @@ static bool parse_float_callback(const char *s, size_t len, void *data,
     float power = 0;
 
     int state = 0;
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         char c = s[i];
         switch (state) {
             case 0:
