@@ -37,8 +37,8 @@ enum ParseResult { KOK = 0, KERROR, KEOF };
  *
  * 用于解析用户自定义结构的回调函数
  */
-typedef bool (*parser_callback)(const char* s, unsigned len, void* data,
-                                unsigned size, void* context);
+typedef bool (*parser_callback)(const char* s, size_t len, void* data,
+                                size_t size, void* context);
 
 /**
  * @brief 列结构描述符
@@ -48,11 +48,11 @@ typedef bool (*parser_callback)(const char* s, unsigned len, void* data,
 struct ColumnDescriptor {
     DataType type;          /// @brief 列中数据类型
     bool is_array;          /// @brief 是否为数组
-    unsigned array_max;     /// @brief 数组元素的最大个数
-    unsigned element_size;  /// @brief 元素的大小
+    size_t array_max;     /// @brief 数组元素的最大个数
+    size_t element_size;  /// @brief 元素的大小
 
-    unsigned offset;  /// @brief 该数据域在结构体中的位置
-    unsigned array_counter_offset;  ///@brief 数组计数偏移
+    ptrdiff_t offset;  /// @brief 该数据域在结构体中的位置
+    ptrdiff_t array_counter_offset;  ///@brief 数组计数偏移
 
     parser_callback callback;  ///@brief 自定义解析回调函数
     void* context;             ///@brief 回调函数上下文
@@ -70,14 +70,14 @@ class TableParser {
      * @brief 解析函数
      *
      */
-    ParseResult parse(void* p, unsigned size);
+    ParseResult parse(void* p, size_t size);
 
     const char* last_error() const;
 
     ~TableParser(){};
 
    private:
-    ParseResult parse_element(unsigned idx, const char* s, unsigned len,
+    ParseResult parse_element(unsigned idx, const char* s, size_t len,
                               void* data);
 
    private:
@@ -87,6 +87,15 @@ class TableParser {
     char _err[128];
 };
 
+/**
+ * @brief 解析所有数据
+ * @tparam T 解析输出结构体类型
+ * @param[in] src 输入数据源
+ * @param[in] desc 列描述数组
+ * @param[in,out] out 输出数组
+ * @param[in,out] err 输出错误信息
+ * @return 解析成功数
+ */
 template <typename T>
 unsigned parse_all(const char* src, const ColumnDescriptor desc[],
                    std::vector<T>& out, std::vector<std::string>& err) {
