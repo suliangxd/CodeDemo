@@ -79,11 +79,11 @@ static bool parse_float_callback(const char *s, unsigned len, void *data,
         neg = true;
     }
 
-    int int_part = 0;
+    float int_part = 0;
     float frac_part = 0;
     float frac_pos = 0.1;
     bool neg_power = false;
-    int power = 0;
+    float power = 0;
 
     unsigned state = 0;
     for (unsigned i = 0; i < len; ++i) {
