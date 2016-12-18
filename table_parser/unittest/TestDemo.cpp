@@ -1,6 +1,7 @@
 //
 // Created by Liang on 2016/12/14.
 //
+#include <gtest/gtest.h>
 #include <cstring>
 #include <iostream>
 
@@ -22,6 +23,7 @@ struct my_data {
 
 bool ParseSubDataCallback(const char* s, size_t len, void* data,
                           size_t size, void* context) {
+    static_cast<void>(context);
     sub_data* p = reinterpret_cast<sub_data*>(data);
 
     if (size != sizeof(sub_data)) return false;
@@ -46,27 +48,38 @@ tp::ColumnDescriptor my_data_desc[] = {
      ParseSubDataCallback, nullptr},
     {tp::KNONE, false, 0, 0, 0, 0, nullptr, nullptr}};
 
-const char* my_data_text =
-    "3:-1.5,2.23,1\thello "
-    "world!\t+100011111111111\ttrue\n3:0,0.1,1e2\ttest\t12345\tfale";
+TEST(DemoTest, HandleLegalInput) {
+    const char* input =
+        "3:-1.5,2.23,1\thello world!\t47\ttrue\n"
+        "2:3.1415927,2.7182818\tooooorz\t42\tfalse\n";
+    static const my_data output[] = {
+        {3, {-1.5f, 2.23f, 1.0f}, "hello world!", 47, {true}},
+        {2, {3.1415927f, 2.7182818f}, "ooooorz", 42, {false}}};
 
-// const char* my_data_text = "3:-1.5,0.1,1e2\thello
-// world!\t-100\ttrue\n3:0,0.1,1e2\ttest\t12345\tfalse";
-
-int main() {
     vector<my_data> results;
     vector<string> errors;
-    size_t count = tp::parse_all(my_data_text, my_data_desc, results, errors);
+    unsigned count = tp::parse_all(input, my_data_desc, results, errors);
 
-    for (int i = 0; i < errors.size(); ++i) cout << errors[i] << endl;
-    for (int i = 0; i < results.size(); ++i) {
-        for (int j = 0; j < results[i].count_a; ++j)
-            cout << results[i].a[j] << " ";
-        cout << results[i].b << " ";
-        cout << results[i].c << " ";
-        cout << results[i].d.a;
-        cout << endl;
+    EXPECT_EQ(2, count);
+    ASSERT_EQ(2, results.size());
+
+    for (unsigned i = 0; i < results.size(); ++i) {
+        // Make a closure for ASSERT_XXX
+        [&]() {
+            ASSERT_EQ(output[i].count_a, results[i].count_a);
+
+            for (unsigned j = 0; j < results[i].count_a; ++j)
+                EXPECT_FLOAT_EQ(output[i].a[j], results[i].a[j]);
+        }();
+        EXPECT_STREQ(output[i].b, results[i].b);
+        EXPECT_EQ(output[i].c, results[i].c);
+        EXPECT_EQ(output[i].d.a, results[i].d.a);
     }
 
-    return 0;
+    SUCCEED();
+}
+
+int main(int argc, char** argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
